@@ -28,11 +28,11 @@ ____
 1. **Скопировать Репозиторий**
 ```bash
   git clone https://github.com/RakhimovAns/L0.git
-1. ```
+```
 2. **Запуск проекта:**
 ```bash
   docker-compose up -d
-2. ```
+```
 3. **Добавление в кафку**
 
 Чтоб не писать через терминал, можно перейти по пути ./cmd/producer/first_producer/first_main.go и запустить его
