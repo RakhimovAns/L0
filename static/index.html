@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Lookup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            width: 400px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        input {
+            width: 100%;
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+        button {
+            width: 100%;
+            padding: 0.7rem;
+            border: none;
+            border-radius: 6px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        pre {
+            background: #f7f7f7;
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+        }
+        .error {
+            color: red;
+            text-align: center;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Order Lookup</h1>
+    <input type="text" id="orderId" placeholder="Enter Order UID">
+    <button onclick="fetchOrder()">Fetch Order</button>
+    <div id="result"></div>
+</div>
+
+<script>
+    async function fetchOrder() {
+        const id = document.getElementById("orderId").value.trim();
+        const resultDiv = document.getElementById("result");
+        resultDiv.innerHTML = '';
+
+        if (!id) {
+            resultDiv.innerHTML = '<div class="error">Please enter an Order UID</div>';
+            return;
+        }
+
+        try {
+            const res = await fetch(`/order/${id}`);
+            const data = await res.json();
+
+            if (res.status === 404 || data.message === "order not found") {
+                resultDiv.innerHTML = '<div class="error">Sorry, bro, order not found 😔</div>';
+            } else {
+                resultDiv.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            }
+        } catch (err) {
+            resultDiv.innerHTML = '<div class="error">Something went wrong!</div>';
+            console.error(err);
+        }
+    }
+</script>
+</body>
+</html>
