@@ -1,52 +1,30 @@
-# More info on config here: https://golangci-lint.run/usage/configuration/#config-file
-run:
-  concurrency: 8
-  timeout: 10m
-  issues-exit-code: 1
-  tests: true
-  skip-dirs:
-    - bin
-    - vendor
-    - var
-    - tmp
-    - .cache
-  skip-files:
-    - \.pb\.go$
-    - \.pb\.gw\.go$
+name: Go Lint Check
 
-output:
-  format: colored-line-number
-  print-issued-lines: true
-  print-linter-name: true
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
-linters-settings:
-  govet:
-    check-shadowing: true
-  dupl:
-    threshold: 100
-  goconst:
-    min-len:         2
-    min-occurrences: 2
+jobs:
+  golangci-lint:
+    name: Run golangci-lint
+    runs-on: ubuntu-latest
 
-linters:
-  disable-all: true
-  enable:
-    - errcheck
-    - goconst
-    - goimports
-    - gosec
-    - govet
-    - ineffassign
-    - megacheck
-    - revive
-    - typecheck
-    - unused
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-issues:
-  exclude-use-default: false
-  exclude:
-    # _ instead of err checks
-    - G104
-    - exported func .* returns unexported type .*, which can be annoying to use
-    - should have a package comment
-    - don't use an underscore in package name
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.25'
+
+      - name: Install golangci-lint
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.59.0
+          echo "$GOPATH/bin" >> $GITHUB_PATH
+
+      - name: Run golangci-lint
+        run: |
+          golangci-lint run --timeout 5m --max-issues-per-linter=0 --max-same-issues=0
