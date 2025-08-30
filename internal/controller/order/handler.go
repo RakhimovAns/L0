@@ -8,6 +8,7 @@ import (
 	"github.com/gofiber/fiber/v3"
 )
 
+//go:generate go run github.com/vektra/mockery/v2@latest --name=Service
 type Service interface {
 	FetchByID(ctx context.Context, in order.FetchIn) (model.Order, error)
 }

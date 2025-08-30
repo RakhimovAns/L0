@@ -35,7 +35,12 @@ REDIS_DB=0
 
 	oldPath := "./configs/local.env"
 	_ = os.Rename(oldPath, oldPath+".bak")
-	defer os.Rename(oldPath+".bak", oldPath)
+	defer func(oldpath, newpath string) {
+		err := os.Rename(oldpath, newpath)
+		if err != nil {
+			return
+		}
+	}(oldPath+".bak", oldPath)
 
 	_ = os.MkdirAll("./configs", 0755)
 	_ = os.WriteFile(oldPath, []byte(content), 0644)
@@ -49,7 +54,12 @@ REDIS_DB=0
 func TestNewConfig_Fail(t *testing.T) {
 	oldPath := "./configs/local.env"
 	_ = os.Rename(oldPath, oldPath+".bak")
-	defer os.Rename(oldPath+".bak", oldPath)
+	defer func(oldpath, newpath string) {
+		err := os.Rename(oldpath, newpath)
+		if err != nil {
+			return
+		}
+	}(oldPath+".bak", oldPath)
 
 	cfg := config.NewConfig()
 	assert.Nil(t, cfg)
